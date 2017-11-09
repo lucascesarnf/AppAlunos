@@ -9,4 +9,11 @@
     <string name=  "provas">Provas</string>
     <string name=  "preferencias">Preferências</string>
 
+    <string name=  "ligar">Ligar</string>
+    <string name=  "enviarSMS">Enviar SMS</string>
+    <string name=  "acharNoMapa">Achar no Mapa</string>
+    <string name=  "navegarSite">Navegar no Site</string>
+    <string name=  "enviarEmail">Enviar E-mail</string>
+    <string name=  "deletar">Deletar</string>
+
 </resources>

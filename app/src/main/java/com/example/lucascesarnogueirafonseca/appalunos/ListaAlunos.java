@@ -1,9 +1,12 @@
 package com.example.lucascesarnogueirafonseca.appalunos;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,6 +42,9 @@ public class ListaAlunos extends AppCompatActivity {
     //Definição do layout de exibição da listagem
 
     private int adapterLayout = android.R.layout.simple_list_item_1;
+
+    //Aluno selecionado no click longo da ListView
+    private Aluno alunoSelecionado = null;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -98,6 +104,10 @@ public class ListaAlunos extends AppCompatActivity {
         //Ligação dos componentes de tela aos atributos da activity
         lvListagem = (ListView) findViewById(R.id.lvListagem);
 
+
+        //Informa que a ListView tem Menu de Contexto
+        registerForContextMenu(lvListagem);
+
         //Metodo que escuta o evento de click SIMPLES
         lvListagem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -110,11 +120,53 @@ public class ListaAlunos extends AppCompatActivity {
         lvListagem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position)+"[selecionado]",Toast.LENGTH_LONG).show();
+
+                //Marca o aluno como selecionado na ListView
+                alunoSelecionado = (Aluno) adapter.getItem(position);
+
+                Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position)+"[selecionado]",Toast.LENGTH_SHORT).show();
                 //True:Não executa o click simples/ False: executa o click simples
-                return true;
+                return false;
             }
         });
+    }
+
+    private void excluirAluno(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Você quer deletar o aluno "+alunoSelecionado.getNome());
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AlunoDAO dao = new AlunoDAO(ListaAlunos.this);
+                dao.deletar(alunoSelecionado);
+                dao.close();
+                carregarLista();
+                alunoSelecionado = null;
+            }
+        });
+    builder.setNegativeButton("Não", null);
+        AlertDialog dialog = builder.create();
+        dialog.setTitle("Confirmar operação");
+        dialog.show();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu,view,menuInfo);
+
+        getMenuInflater().inflate(R.menu.menu_contexto, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menuDeletar:
+                excluirAluno();
+                break;
+            default:
+                break;
+        }
+        return  super.onContextItemSelected(item);
     }
 
     private void carregarLista(){
