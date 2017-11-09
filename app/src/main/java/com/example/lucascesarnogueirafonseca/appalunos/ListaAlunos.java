@@ -2,6 +2,7 @@ package com.example.lucascesarnogueirafonseca.appalunos;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -112,7 +113,12 @@ public class ListaAlunos extends AppCompatActivity {
         lvListagem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position),Toast.LENGTH_LONG).show();
+
+                Intent form = new Intent(ListaAlunos.this,Formulario.class);
+                alunoSelecionado = (Aluno) lvListagem.getItemAtPosition(position);
+                form.putExtra("ALUNO_SELECIONADO", alunoSelecionado);
+                startActivity(form);
+                //Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position),Toast.LENGTH_LONG).show();
             }
         });
 
@@ -124,7 +130,7 @@ public class ListaAlunos extends AppCompatActivity {
                 //Marca o aluno como selecionado na ListView
                 alunoSelecionado = (Aluno) adapter.getItem(position);
 
-                Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position)+"[selecionado]",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ListaAlunos.this, "Aluno: "+listaAlunos.get(position)+"[selecionado]",Toast.LENGTH_SHORT).show();
                 //True:Não executa o click simples/ False: executa o click simples
                 return false;
             }
@@ -159,9 +165,35 @@ public class ListaAlunos extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item){
+        Intent intent;
+
         switch (item.getItemId()){
             case R.id.menuDeletar:
                 excluirAluno();
+                break;
+            case R.id.menuLigar:
+                intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + alunoSelecionado.getTelefone()));
+                startActivity(intent);
+                break;
+            case R.id.menuEnviarSMS:
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("sms:" + alunoSelecionado.getTelefone()));
+                intent.putExtra("sms_body", "Mensagem de boas vindas :-)");
+                startActivity(intent);
+                break;
+            case R.id.menuNoMapa:
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("geo:0,0?z=14&q="+alunoSelecionado.getEndereco()));
+                startActivity(intent);
+                break;
+            case R.id.menuEnviarEmail:
+                intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{alunoSelecionado.getEmail()});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Falando sobre o curso");
+                intent.putExtra(Intent.EXTRA_TEXT, "O curso foi muito legal");
+                startActivity(intent);
                 break;
             default:
                 break;

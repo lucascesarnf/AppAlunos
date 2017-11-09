@@ -13,10 +13,6 @@
         android:title="@string/acharNoMapa"
         />
     <item
-        android:id = "@+id/menuNavegar"
-        android:title="@string/navegarSite"
-        />
-    <item
         android:id = "@+id/menuEnviarEmail"
         android:title="@string/enviarEmail"
         />

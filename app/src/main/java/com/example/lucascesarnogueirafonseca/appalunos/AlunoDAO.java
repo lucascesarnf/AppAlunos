@@ -119,4 +119,24 @@ public class AlunoDAO extends SQLiteOpenHelper{
 
     }
 
+    public void alterar(Aluno aluno){
+
+        ContentValues values =  new ContentValues();
+
+        //Definição de valores dos campos de tabela
+        values.put("nome", aluno.getNome());
+        values.put("telefone", aluno.getTelefone());
+        values.put("endereco", aluno.getEndereco());
+        values.put("email", aluno.getEmail());
+        values.put("foto", aluno.getFoto());
+        values.put("nota", aluno.getNota());
+
+        //Colecao de valores de parametro do SQL
+        String[] args = {aluno.getId().toString()};
+
+        //Alterar dados do Aluno no BD
+        getWritableDatabase().update(TABELA, values, "id=?",args);
+        Log.i(TAG, "Aluno alterado: "+aluno.getNome());
+    }
+
 }

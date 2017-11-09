@@ -32,8 +32,18 @@ public class FormularioHelper {
 
     }
 
-    public Aluno getAluno(){
+    public Aluno getUpdatedAluno(Aluno alunoAtual){
+        //Cria Aluno
+        aluno = alunoAtual;
+        aluno.setNome(nome.getText().toString());
+        aluno.setTelefone(telefone.getText().toString());
+        aluno.setEndereco(endereco.getText().toString());
+        aluno.setEmail(email.getText().toString());
+        aluno.setNota(Double.valueOf(nota.getProgress()));
+        return aluno;
+    }
 
+    public Aluno getAluno(){
         //Cria Aluno
         aluno = new Aluno();
         aluno.setNome(nome.getText().toString());
@@ -43,6 +53,17 @@ public class FormularioHelper {
         aluno.setNota(Double.valueOf(nota.getProgress()));
 
         return aluno;
+    }
+
+    public void setAluno(Aluno aluno){
+        nome.setText(aluno.getNome());
+        telefone.setText(aluno.getTelefone());
+        endereco.setText(aluno.getEndereco());
+        email.setText(aluno.getEmail());
+        nota.setProgress(aluno.getNota().intValue());
+
+        this.aluno = aluno;
+
     }
 
 }

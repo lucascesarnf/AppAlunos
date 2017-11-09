@@ -18,6 +18,7 @@ public class Formulario extends AppCompatActivity {
     //Atributos de componentes de tela
 private Button botao;
 private  FormularioHelper helper;
+    private Aluno alunoParaSerAlterado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +28,37 @@ private  FormularioHelper helper;
         //Cria o objeto helper
         helper = new FormularioHelper(this);
 
+        //Busca o aluno a ser alterado
+        alunoParaSerAlterado = (Aluno) getIntent().getSerializableExtra("ALUNO_SELECIONADO");
+        if(alunoParaSerAlterado!= null){
+            //Atualiza a tela com os dados
+            helper.setAluno(alunoParaSerAlterado);
+        }
+
         botao = (Button) findViewById(R.id.button);
         botao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Aluno aluno = helper.getAluno();
+                Aluno aluno;
+                if(alunoParaSerAlterado!= null){
+                    //Atualiza a tela com os dados
+
+                 aluno = helper.getUpdatedAluno(alunoParaSerAlterado);
+
+                }else{
+
+                 aluno = helper.getAluno();
+
+                }
                 //Cria objeto DAO para iniciar conexao com DB
                 AlunoDAO dao = new AlunoDAO(Formulario.this);
-                //Chamada do metodo de cadastro do Aluno
-                dao.cadastrar(aluno);
+
+                if(aluno.getId() == null){
+                    //Chamada do metodo de cadastro do Aluno
+                    dao.cadastrar(aluno);
+                }else{
+                     dao.alterar(aluno);
+                }
                 //Encerramento da conexao com o bd
                 dao.close();
 
